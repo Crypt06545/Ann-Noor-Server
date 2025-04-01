@@ -1,5 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,11 +16,15 @@ const uploadOnCloudinary = async (localFilePath) => {
       resource_type: "auto",
     });
 
-    // upload successfully
-    console.log("file uploaded successfully on cloudnary", response.url);
+    console.log("File uploaded to Cloudinary:", response.url);
+    // Delete the local file after successful upload
+    // fs.unlinkSync(localFilePath);
+
     return response;
   } catch (error) {
-    fs.unlinkSync(localFilePath); //remove the locally saved temperay file as the upload  operation got failed
+    // Clean up local file if upload fails
+    fs.unlinkSync(localFilePath);
+    console.error("Cloudinary upload failed:", error.message);
     return null;
   }
 };

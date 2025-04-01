@@ -29,10 +29,10 @@ const UserSchema = new Schema(
     },
 
     // cloudnary
-    // avatar: {
-    //   type: String,
-    //   required: true,
-    // },
+    avatar: {
+      type: String,
+      required: true,
+    },
 
     isAdmin: {
       type: Boolean,
