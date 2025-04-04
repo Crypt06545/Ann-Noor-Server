@@ -29,3 +29,20 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     throw new apiError(401, error?.message || "Invalid Access Token!!");
   }
 });
+
+export const adminOnly = asyncHandler(async (req, res, next) => {
+  try {
+    await verifyJWT(req, res, () => {});
+    const user = req.user;
+    if (!user) {
+      throw new apiError(401, "Unauthorized access");
+    }
+    if (user.role !== "admin") {
+      throw new apiError(403, "Forbidden: Admin access required");
+    }
+
+    next();
+  } catch (error) {
+    throw new apiError(401, error.message);
+  }
+});
