@@ -12,6 +12,7 @@
   "author": "Mehaid Hasan",
   "license": "ISC",
   "dependencies": {
+    "@arcjet/node": "^1.0.0-beta.5",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.6.0",
     "cookie-parser": "^1.4.7",

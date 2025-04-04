@@ -3,6 +3,7 @@ import asyncHandler from "../src/utils/asyncHandler.js";
 import { User } from "../src/models/user-model.js";
 import uploadOnCloudinary from "../src/utils/cloudinary.js";
 import apiResponse from "../src/utils/apiResponse.js";
+import jwt from "jsonwebtoken";
 
 // access toeken refresh token
 export const generateAccessTokenAndRefreshToken = async (useId) => {
@@ -108,7 +109,8 @@ export const loginUser = asyncHandler(async (req, res) => {
   );
   const options = {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
   };
 
   // send it cookie
@@ -140,11 +142,61 @@ export const logOut = asyncHandler(async (req, res) => {
   );
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
   };
   return res
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new apiResponse(200, {}, "User Log Out SuccessFully!!"));
+});
+
+//refresh access token
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incommingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+  if (!incommingRefreshToken) {
+    throw new apiError(401, "Unauthorized request!!");
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      incommingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    const user = await User.findById(decodedToken?._id);
+    if (!user) {
+      throw new apiError(401, "Invalid Refresh Token!!");
+    }
+
+    if (incommingRefreshToken !== user?.refreshToken) {
+      throw new apiError(401, "Refresh Token expired or invalid!!");
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    };
+
+    const { accessToken, newRefreshToken } =
+      await generateAccessTokenAndRefreshToken(user._id);
+    return res
+      .status(200)
+      .cookie("accessToken", options)
+      .cookie("refreshToken", options)
+      .json(
+        new apiResponse(
+          200,
+          {
+            accessToken,
+            refreshToken: newRefreshToken,
+          },
+          "Access Token Refreshed!"
+        )
+      );
+  } catch (error) {
+    throw new apiError(401, error?.message || "Invalid Refresh Token!!");
+  }
 });

@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -34,9 +36,10 @@ const UserSchema = new Schema(
       required: true,
     },
 
-    isAdmin: {
-      type: Boolean,
-      default: false,
+    role: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
     },
     orders: [
       {
@@ -74,6 +77,7 @@ UserSchema.methods.generateAccessToken = function () {
       _id: this._id,
       email: this.email,
       username: this.username,
+      role: this.role,
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
