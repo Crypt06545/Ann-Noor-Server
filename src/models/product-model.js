@@ -53,12 +53,12 @@ const productSchema = new Schema(
     //   required: true,
     //   trim: true,
     // },
-    // images: [
-    //   {
-    //     type: String,
-    //     required: true,
-    //   },
-    // ],
+    images: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     // sku: {
     //   type: String,
     //   unique: true,
