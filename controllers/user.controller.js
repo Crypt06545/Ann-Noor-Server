@@ -153,15 +153,16 @@ export const logOut = asyncHandler(async (req, res) => {
 
 //refresh access token
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-  const incommingRefreshToken =
+  const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
-  if (!incommingRefreshToken) {
+
+  if (!incomingRefreshToken) {
     throw new apiError(401, "Unauthorized request!!");
   }
 
   try {
     const decodedToken = jwt.verify(
-      incommingRefreshToken,
+      incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
 
@@ -170,7 +171,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new apiError(401, "Invalid Refresh Token!!");
     }
 
-    if (incommingRefreshToken !== user?.refreshToken) {
+    if (incomingRefreshToken !== user?.refreshToken) {
       throw new apiError(401, "Refresh Token expired or invalid!!");
     }
 
@@ -180,18 +181,19 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
       sameSite: "strict",
     };
 
-    const { accessToken, newRefreshToken } =
+    const { accessToken, refreshToken } =
       await generateAccessTokenAndRefreshToken(user._id);
+
     return res
       .status(200)
-      .cookie("accessToken", options)
-      .cookie("refreshToken", options)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(
         new apiResponse(
           200,
           {
             accessToken,
-            refreshToken: newRefreshToken,
+            refreshToken,
           },
           "Access Token Refreshed!"
         )
