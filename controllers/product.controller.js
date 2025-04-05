@@ -2,7 +2,9 @@ import Product from "../src/models/product-model.js";
 import apiError from "../src/utils/apiError.js";
 import apiResponse from "../src/utils/apiResponse.js";
 import asyncHandler from "../src/utils/asyncHandler.js";
-import uploadOnCloudinary from "../src/utils/cloudinary.js";
+import uploadOnCloudinary, {
+  deleteFromCloudinary,
+} from "../src/utils/cloudinary.js";
 
 // get all products
 export const getAllProducts = asyncHandler(async (req, res) => {
@@ -66,13 +68,33 @@ export const createProduct = asyncHandler(async (req, res) => {
     .json(new apiResponse(201, createdProduct, "Product created successfully"));
 });
 
+// update a product
+export const updateProduct = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+});
+
 //delete a product
 export const deleteProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  console.log(id);
+  // console.log(id);
   const existProduct = await Product.findOneAndDelete({ _id: id });
   if (!existProduct) {
     throw new apiError(400, "Product not found");
   }
+
+  // Delete all images from Cloudinary (if they exist)
+  if (existProduct.images && existProduct.images.length > 0) {
+    try {
+      // Loop through each image and delete it from Cloudinary
+      for (const imageUrl of existProduct.images) {
+        await deleteFromCloudinary(imageUrl);
+      }
+    } catch (error) {
+      console.error("Error deleting images from Cloudinary:", error);
+      // Continue even if deletion fails
+    }
+  }
+
   res.status(200).json(new apiResponse(200, "Product Deleted Successfully!!"));
 });
