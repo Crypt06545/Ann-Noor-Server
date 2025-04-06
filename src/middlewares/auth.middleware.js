@@ -30,6 +30,8 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
   }
 });
 
+// admin access route 
+
 export const adminOnly = asyncHandler(async (req, res, next) => {
   try {
     await verifyJWT(req, res, () => {});

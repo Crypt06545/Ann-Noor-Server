@@ -21,7 +21,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     );
 });
 
-// create product
+// create products
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, perfumeTitle, fragranceNotes } = req.body;
 
@@ -68,13 +68,15 @@ export const createProduct = asyncHandler(async (req, res) => {
     .json(new apiResponse(201, createdProduct, "Product created successfully"));
 });
 
-// update a product
+// update a products
 export const updateProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   console.log(id);
 });
 
-//delete a product
+//delete a products
+
+
 export const deleteProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   // console.log(id);

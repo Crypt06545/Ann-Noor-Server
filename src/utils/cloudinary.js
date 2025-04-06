@@ -35,12 +35,11 @@ export default uploadOnCloudinary;
 export const deleteFromCloudinary = async (imageUrl) => {
   try {
     if (!imageUrl) return null;
-
     // Extract public_id from the URL (handles Cloudinary URL format)
     const parts = imageUrl.split("/");
     const folderAndFile = parts.slice(-2).join("/"); // e.g., "products/iyezebqregi8olf7saib"
     const publicId = folderAndFile.split(".")[0]; // Removes file extension
-
+    // http://res.cloudinary.com/dcf5jzxpy/image/upload/v1743824838/products/pm4qgzzxpzq9gesijcmy.jpg
     // Delete the image from Cloudinary
     const result = await cloudinary.uploader.destroy(publicId);
     return result;
