@@ -11,8 +11,6 @@ import { upload } from "../middlewares/multer.middleware.js";
 
 const productRouter = Router();
 
-
-
 productRouter.route("/product-details/:id").get(prodcutDetails);
 
 // secure routes
@@ -29,6 +27,8 @@ productRouter
   .route("/delete-product/:id")
   .delete(verifyJWT, adminOnly, deleteProduct);
 
-productRouter.route("/update-product/:id").put(updateProduct);
+productRouter
+  .route("/update-product/:id")
+  .put(verifyJWT, adminOnly, updateProduct);
 
 export default productRouter;

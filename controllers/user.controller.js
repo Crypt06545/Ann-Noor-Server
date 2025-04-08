@@ -203,3 +203,43 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
+// update role
+export const updateUserRole = asyncHandler(async (req, res) => {
+  const { email } = req.params;
+  const { role } = req.body;
+
+  // Check if user exists
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new apiError(404, "User not found!");
+  }
+
+  // Validate role exists in request
+  if (!role) {
+    throw new apiError(400, "Role is required!");
+  }
+
+  // Validate role against enum values
+  const validRoles = await User.schema.path("role").enumValues;
+  if (!validRoles.includes(role)) {
+    throw new apiError(400, "Invalid role!");
+  }
+
+  // Update the user's role
+  const updatedUser = await User.findOneAndUpdate(
+    { email },
+    { $set: { role } },
+    { new: true }
+  );
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        email: updatedUser.email,
+        newRole: updatedUser.role,
+      },
+      "Role updated successfully"
+    )
+  );
+});

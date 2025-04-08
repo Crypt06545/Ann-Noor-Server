@@ -6,8 +6,9 @@ import {
   logOut,
   refreshAccessToken,
   registerUser,
+  updateUserRole,
 } from "../../controllers/user.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { adminOnly, verifyJWT } from "../middlewares/auth.middleware.js";
 
 const userRouter = Router();
 
@@ -21,5 +22,8 @@ userRouter.route("/login").post(loginUser);
 // secure route
 userRouter.route("/logout").post(verifyJWT, logOut);
 userRouter.route("/refresh-token").post(refreshAccessToken);
+userRouter
+  .route("/update-role/:email")
+  .patch(verifyJWT, adminOnly, updateUserRole);
 
 export default userRouter;
