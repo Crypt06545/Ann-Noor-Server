@@ -21,6 +21,18 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     );
 });
 
+// get single product
+export const prodcutDetails = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const product = await Product.findOne({ _id: id });
+  if (!product) {
+    throw new apiError(404, "The Product dose not exist!!");
+  }
+  res
+    .status(200)
+    .json(new apiResponse(200, product, "Product found SuccessFully!!"));
+});
+
 // create products
 export const createProduct = asyncHandler(async (req, res) => {
   const { name, perfumeTitle, fragranceNotes } = req.body;
@@ -71,12 +83,31 @@ export const createProduct = asyncHandler(async (req, res) => {
 // update a products
 export const updateProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
+  const updateData = req.body;
   console.log(id);
+
+  if (!id) {
+    throw new apiError(400, "Product ID is required");
+  }
+
+  const updateProducts = await Product.findByIdAndUpdate(
+    id,
+    { $set: updateData },
+    { new: true }
+  );
+
+  if (!updateProducts) {
+    throw new apiError(404, "The product did not exist!!");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new apiResponse(200, "Product Updated Successfully!!", updateProducts)
+    );
 });
 
 //delete a products
-
-
 export const deleteProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   // console.log(id);
