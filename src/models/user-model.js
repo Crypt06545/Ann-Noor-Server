@@ -30,17 +30,29 @@ const UserSchema = new Schema(
       minLength: 6,
     },
 
-    // cloudnary
-    avatar: {
-      type: String,
-      required: true,
-    },
+    // // cloudnary
+    // avatar: {
+    //   type: String,
+    //   required: true,
+    // },
 
     role: {
       type: String,
       enum: ["customer", "admin"],
       default: "customer",
     },
+    cartItems: [
+      {
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+      },
+    ],
     orders: [
       {
         type: Schema.Types.ObjectId,
