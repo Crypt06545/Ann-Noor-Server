@@ -16,6 +16,9 @@ const orderItemSchema = new Schema({
     required: true,
     min: 0,
   },
+  address:{
+    type:String,ref:'Address'
+  }
 });
 
 const orderSchema = new Schema(
@@ -42,13 +45,6 @@ const orderSchema = new Schema(
       type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
-    },
-    shippingAddress: {
-      fullName: { type: String, required: true },
-      address: { type: String, required: true },
-      city: { type: String, required: true },
-      postalCode: { type: String, required: true },
-      country: { type: String, required: true },
     },
     isPaid: {
       type: Boolean,

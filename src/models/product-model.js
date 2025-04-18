@@ -7,68 +7,56 @@ const productSchema = new Schema(
       required: true,
       trim: true,
     },
-    perfumeTitle: {
+    brand: {
       type: String,
-      trim: true,
       required: true,
     },
-    fragranceNotes: {
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    offerPrice: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    availability: {
       type: String,
-      trim: true,
       required: true,
     },
-    // lastingTime: {
-    //   type: String,
-    //   trim: true,
-    //   required: true,
-    // },
-    // smellProjection: {
-    //   type: String,
-    //   trim: true,
-    //   required: true,
-    // },
-    // usage: {
-    //   type: String,
-    //   trim: true,
-    //   required: true,
-    // },
-    // price: {
-    //   type: Number,
-    //   required: true,
-    //   min: 0,
-    // },
-    // quantity: {
-    //   type: Number,
-    //   required: true,
-    //   min: 0,
-    // },
-    // stockStatus: {
-    //   type: String,
-    //   required: true,
-    //   enum: ["inStock", "outOfStock", "lowStock"],
-    //   default: "inStock",
-    // },
-    // category: {
-    //   type: String,
-    //   required: true,
-    //   trim: true,
-    // },
+    stockStatus: {
+      type: String,
+      required: true,
+      enum: ["inStock", "outOfStock", "lowStock"],
+      default: "inStock",
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     images: [
       {
         type: String,
         required: true,
       },
     ],
-    // sku: {
-    //   type: String,
-    //   unique: true,
-    //   trim: true,
-    //   required: true,
-    // },
-    // tags: {
-    //   type: [String],
-    //   default: [],
-    // },
+    sku: {
+      type: String,
+      unique: true,
+      trim: true,
+      required: true,
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

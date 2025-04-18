@@ -78,7 +78,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new apiResponse(200, createdUser, "User registered successfully !!"));
+    .json(new apiResponse(200, "User registered successfully !!", createdUser));
 });
 
 // login a user
@@ -119,15 +119,11 @@ export const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      new apiResponse(
-        200,
-        {
-          user: loggedUser,
-          accessToken,
-          refreshToken,
-        },
-        "User looged in successFully!!"
-      )
+      new apiResponse(200, "User looged in successFully!!", {
+        user: loggedUser,
+        accessToken,
+        refreshToken,
+      })
     );
 });
 
@@ -148,7 +144,7 @@ export const logOut = asyncHandler(async (req, res) => {
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new apiResponse(200, {}, "User Log Out SuccessFully!!"));
+    .json(new apiResponse(200, "User Log Out SuccessFully!!", {}));
 });
 
 //refresh access token
@@ -242,4 +238,21 @@ export const updateUserRole = asyncHandler(async (req, res) => {
       "Role updated successfully"
     )
   );
+});
+
+// is-auth
+export const isAuth = asyncHandler(async (req, res) => {
+  if (!req?.user || !req?.user?._id) {
+    throw new apiError(401, "Unauthorized access!");
+  }
+  const user = await User.findById(req?.user?._id).select(
+    "-password -refreshToken"
+  );
+
+  if (!user) {
+    throw new apiError(404, "User not found!");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200,"User authenticated successfully", user ));
 });

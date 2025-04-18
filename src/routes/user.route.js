@@ -2,6 +2,8 @@ import { Router } from "express";
 
 import { upload } from "../middlewares/multer.middleware.js";
 import {
+
+  isAuth,
   loginUser,
   logOut,
   refreshAccessToken,
@@ -25,5 +27,8 @@ userRouter.route("/refresh-token").post(refreshAccessToken);
 userRouter
   .route("/update-role/:email")
   .patch(verifyJWT, adminOnly, updateUserRole);
+
+// isauth 
+userRouter.route("/is-auth").get(verifyJWT,isAuth);
 
 export default userRouter;
