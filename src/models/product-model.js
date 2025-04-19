@@ -53,6 +53,10 @@ const productSchema = new Schema(
       trim: true,
       required: true,
     },
+    sizes: {
+      type: [String],
+      required: true,
+    },
     tags: {
       type: [String],
       default: [],

@@ -35,11 +35,11 @@ export const prodcutDetails = asyncHandler(async (req, res) => {
 
 // create products
 export const createProduct = asyncHandler(async (req, res) => {
-  const { name, perfumeTitle, fragranceNotes } = req.body;
+  const { name,brand,price,offerPrice,quantity,availability,stockStatus,category,sku,tags,sizes} = req.body;
 
   // Validation - Check required fields
   if (
-    [name, perfumeTitle, fragranceNotes].some((field) => field?.trim() === "")
+    [name,brand,price,offerPrice,quantity,availability,stockStatus,category,sku,tags].some((field) => field?.trim() === "")
   ) {
     throw new apiError(400, "All product fields are required");
   }
@@ -63,9 +63,7 @@ export const createProduct = asyncHandler(async (req, res) => {
 
   // Create product in database
   const product = await Product.create({
-    name,
-    perfumeTitle,
-    fragranceNotes,
+    name,brand,price,offerPrice,quantity,availability,stockStatus,category,sku,sizes,tags,
     images: imageUrls,
   });
 
@@ -77,7 +75,7 @@ export const createProduct = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new apiResponse(201, createdProduct, "Product created successfully"));
+    .json(new apiResponse(201, "Product created successfully", createdProduct));
 });
 
 // update a products
