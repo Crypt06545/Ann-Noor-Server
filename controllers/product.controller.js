@@ -17,7 +17,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new apiResponse(200, allProducts, "All products retrieved successfully")
+      new apiResponse(200, "All products retrieved successfully", allProducts)
     );
 });
 
@@ -30,16 +30,35 @@ export const prodcutDetails = asyncHandler(async (req, res) => {
   }
   res
     .status(200)
-    .json(new apiResponse(200, product, "Product found SuccessFully!!"));
+    .json(new apiResponse(200, "Product found SuccessFully!!", product));
 });
 
 // create products
 export const createProduct = asyncHandler(async (req, res) => {
-  const { name,brand,price,offerPrice,quantity,availability,stockStatus,category,sku,tags,sizes} = req.body;
+  const {
+    name,
+    price,
+    offerPrice,
+    quantity,
+    stockStatus,
+    category,
+    sku,
+    tags,
+    sizes,
+  } = req.body;
 
   // Validation - Check required fields
   if (
-    [name,brand,price,offerPrice,quantity,availability,stockStatus,category,sku,tags].some((field) => field?.trim() === "")
+    [
+      name,
+      price,
+      offerPrice,
+      quantity,
+      stockStatus,
+      category,
+      sku,
+      // tags,
+    ].some((field) => field?.trim() === "")
   ) {
     throw new apiError(400, "All product fields are required");
   }
@@ -63,7 +82,15 @@ export const createProduct = asyncHandler(async (req, res) => {
 
   // Create product in database
   const product = await Product.create({
-    name,brand,price,offerPrice,quantity,availability,stockStatus,category,sku,sizes,tags,
+    name,
+    price,
+    offerPrice,
+    quantity,
+    stockStatus,
+    category,
+    sku,
+    sizes,
+    tags,
     images: imageUrls,
   });
 
@@ -82,7 +109,7 @@ export const createProduct = asyncHandler(async (req, res) => {
 export const updateProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const updateData = req.body;
-  console.log(id);
+  // console.log(id);
 
   if (!id) {
     throw new apiError(400, "Product ID is required");

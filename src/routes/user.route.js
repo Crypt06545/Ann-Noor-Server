@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { upload } from "../middlewares/multer.middleware.js";
 import {
-
+  allUsers,
   isAuth,
   loginUser,
   logOut,
@@ -24,11 +24,12 @@ userRouter.route("/login").post(loginUser);
 // secure route
 userRouter.route("/logout").post(verifyJWT, logOut);
 userRouter.route("/refresh-token").post(refreshAccessToken);
+userRouter.route("/all-users").get(verifyJWT, adminOnly, allUsers);
 userRouter
   .route("/update-role/:email")
   .patch(verifyJWT, adminOnly, updateUserRole);
 
-// isauth 
-userRouter.route("/is-auth").get(verifyJWT,isAuth);
+// isauth
+userRouter.route("/is-auth").get(verifyJWT, isAuth);
 
 export default userRouter;

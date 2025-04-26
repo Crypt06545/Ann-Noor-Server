@@ -254,5 +254,16 @@ export const isAuth = asyncHandler(async (req, res) => {
   }
   return res
     .status(200)
-    .json(new apiResponse(200,"User authenticated successfully", user ));
+    .json(new apiResponse(200, "User authenticated successfully", user));
+});
+
+// get all users
+export const allUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({}).select(
+    "-password -refreshToken"
+  );
+  if (!users) {
+    throw new apiError(500, "Failed to retrieve users");
+  }
+  res.status(200).json(new apiResponse(200, "All users retrieved successfully", users));
 });

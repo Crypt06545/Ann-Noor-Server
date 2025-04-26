@@ -14,7 +14,8 @@ const productRouter = Router();
 productRouter.route("/product-details/:id").get(prodcutDetails);
 
 // secure routes
-productRouter.route("/all-products").get(verifyJWT, adminOnly, getAllProducts);
+// productRouter.route("/all-products").get(verifyJWT, adminOnly, getAllProducts);
+productRouter.route("/all-products").get( getAllProducts);
 productRouter
   .route("/create-product")
   .post(

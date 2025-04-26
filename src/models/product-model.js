@@ -7,10 +7,6 @@ const productSchema = new Schema(
       required: true,
       trim: true,
     },
-    brand: {
-      type: String,
-      required: true,
-    },
     price: {
       type: Number,
       required: true,
@@ -25,10 +21,6 @@ const productSchema = new Schema(
       type: Number,
       required: true,
       min: 0,
-    },
-    availability: {
-      type: String,
-      required: true,
     },
     stockStatus: {
       type: String,
