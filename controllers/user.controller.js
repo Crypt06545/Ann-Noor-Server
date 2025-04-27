@@ -240,6 +240,34 @@ export const updateUserRole = asyncHandler(async (req, res) => {
   );
 });
 
+// delete user
+export const deleteUser = asyncHandler(async (req, res) => {
+  const { email } = req.params;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new apiError(404, "User not found!");
+  }
+
+  if (user?.role === "admin") {
+    throw new apiError(403, "Cannot delete admin accounts!");
+  }
+
+  const deletedUser = await User.findOneAndDelete({ email });
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        email: deletedUser.email,
+        username: deletedUser.username,
+        deletedAt: new Date(),
+      },
+      "User deleted successfully"
+    )
+  );
+});
+
 // is-auth
 export const isAuth = asyncHandler(async (req, res) => {
   if (!req?.user || !req?.user?._id) {
@@ -259,11 +287,11 @@ export const isAuth = asyncHandler(async (req, res) => {
 
 // get all users
 export const allUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({}).select(
-    "-password -refreshToken"
-  );
+  const users = await User.find({}).select("-password -refreshToken");
   if (!users) {
     throw new apiError(500, "Failed to retrieve users");
   }
-  res.status(200).json(new apiResponse(200, "All users retrieved successfully", users));
+  res
+    .status(200)
+    .json(new apiResponse(200, "All users retrieved successfully", users));
 });

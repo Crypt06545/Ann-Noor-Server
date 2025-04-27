@@ -3,6 +3,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
   allUsers,
+  deleteUser,
   isAuth,
   loginUser,
   logOut,
@@ -25,6 +26,7 @@ userRouter.route("/login").post(loginUser);
 userRouter.route("/logout").post(verifyJWT, logOut);
 userRouter.route("/refresh-token").post(refreshAccessToken);
 userRouter.route("/all-users").get(verifyJWT, adminOnly, allUsers);
+userRouter.route("/delete-user/:email").delete(verifyJWT, adminOnly, deleteUser);
 userRouter
   .route("/update-role/:email")
   .patch(verifyJWT, adminOnly, updateUserRole);
