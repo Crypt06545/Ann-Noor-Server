@@ -4,6 +4,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
   allUsers,
   deleteUser,
+  googleAuth,
   isAuth,
   loginUser,
   logOut,
@@ -21,12 +22,15 @@ userRouter
   .post(upload.fields([{ name: "avatar", maxCount: 1 }]), registerUser);
 
 userRouter.route("/login").post(loginUser);
+userRouter.route("/auth/google-auth").post(googleAuth);
 
 // secure route
 userRouter.route("/logout").post(verifyJWT, logOut);
 userRouter.route("/refresh-token").post(refreshAccessToken);
 userRouter.route("/all-users").get(verifyJWT, adminOnly, allUsers);
-userRouter.route("/delete-user/:email").delete(verifyJWT, adminOnly, deleteUser);
+userRouter
+  .route("/delete-user/:email")
+  .delete(verifyJWT, adminOnly, deleteUser);
 userRouter
   .route("/update-role/:email")
   .patch(verifyJWT, adminOnly, updateUserRole);

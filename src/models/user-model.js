@@ -29,6 +29,15 @@ const UserSchema = new Schema(
       required: [true, "User password is required"],
       minLength: 6,
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
 
     // // cloudnary
     // avatar: {

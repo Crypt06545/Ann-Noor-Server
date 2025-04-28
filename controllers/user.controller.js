@@ -4,6 +4,78 @@ import { User } from "../src/models/user-model.js";
 import uploadOnCloudinary from "../src/utils/cloudinary.js";
 import apiResponse from "../src/utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// Google authentication controller
+export const googleAuth = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    throw new apiError(400, "Google token is required");
+  }
+
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Always check by email first
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // If user exists but doesn't have googleId, attach it
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save({ validateBeforeSave: false });
+      }
+    } else {
+      // If no user found, create new
+      user = await User.create({
+        username: name.toLowerCase().replace(/\s/g, ''),
+        email,
+        googleId,
+        avatar: picture,
+        isVerified: true,
+        password: googleId + process.env.JWT_SECRET, // Dummy password
+      });
+    }
+
+    // Generate tokens
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
+
+    const loggedInUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new apiResponse(200, "Google authentication successful", {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        })
+      );
+
+  } catch (error) {
+    throw new apiError(401, "Invalid Google token");
+  }
+});
+
 
 // access toeken refresh token
 export const generateAccessTokenAndRefreshToken = async (useId) => {
