@@ -76,7 +76,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
   }
 });
 
-
 // access toeken refresh token
 export const generateAccessTokenAndRefreshToken = async (useId) => {
   try {

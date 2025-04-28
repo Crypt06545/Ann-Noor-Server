@@ -45,6 +45,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     sku,
     tags,
     sizes,
+    rating,
   } = req.body;
 
   // Validation - Check required fields
@@ -92,6 +93,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     sizes,
     tags,
     images: imageUrls,
+    rating,
   });
 
   // Verify product creation
