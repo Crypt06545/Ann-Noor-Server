@@ -1,6 +1,6 @@
 import Product from "../src/models/product-model.js";
 import apiError from "../src/utils/apiError.js";
-import apiResponse from "../src/utils/apiResponse";
+import apiResponse from "../src/utils/apiResponse.js";
 import asyncHandler from "../src/utils/asyncHandler.js";
 
 // get all cart products
@@ -20,33 +20,39 @@ export const getCartProducts = asyncHandler(async (req, res) => {
 
 // addToCart
 export const addToCart = asyncHandler(async (req, res) => {
-  const { productId } = req.body;
+  const { productId, quantity } = req.body;
   const user = req.user;
 
-  // Verify product exists
+  // Find the product
   const product = await Product.findById(productId);
   if (!product) {
-    throw new apiError(404, "Product not found");
+    throw new apiError(404, "Product not found!");
   }
 
-  // Check if already in cart
+  // Find if product already exists in cart
   const existingItem = user.cartItems.find(
-    (item) => item.id.toString() === productId
+    (item) => item.product.toString() === productId
   );
 
   if (existingItem) {
-    existingItem.quantity += 1;
+    // If it exists, increase quantity
+    existingItem.quantity += quantity || 1;
   } else {
-    user.cartItems.push({ id: productId, quantity: 1 });
+    // If not, push new item
+    user.cartItems.push({
+      product: productId,
+      quantity: quantity || 1,
+    });
   }
 
   await user.save();
 
-  // Return the apiResponse
   return res
     .status(200)
     .json(new apiResponse(200, "Item added successfully!", user.cartItems));
 });
+
+
 
 // increase quantity
 export const updateQuantity = asyncHandler(async (req, res) => {
