@@ -4,6 +4,9 @@ import apiResponse from "../src/utils/apiResponse.js";
 import asyncHandler from "../src/utils/asyncHandler.js";
 
 // create order
+export const createOrder = asyncHandler(async(req,res)=>{
+  const {} =req.body
+})
 
 // update order status
 export const updateOrderStatus = asyncHandler(async (req, res) => {
@@ -43,5 +46,6 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
       new apiResponse(200, updatedOrder, "Order status updated successfully")
     );
 });
+
 
 // delete order
