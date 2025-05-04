@@ -64,8 +64,20 @@ const UserSchema = new Schema(
     ],
     orders: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
+        _id: mongoose.Schema.Types.ObjectId,
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        customer: {},
+        payment: {},
+        items: [],
+        subtotal: Number,
+        shipping: Number,
+        orderTotal: Number,
+        status: String,
+        isPaid: Boolean,
+        paidAt: Date,
+        orderDate: Date,
+        createdAt: Date,
+        updatedAt: Date,
       },
     ],
     refreshToken: {

@@ -5,6 +5,7 @@ import uploadOnCloudinary from "../src/utils/cloudinary.js";
 import apiResponse from "../src/utils/apiResponse.js";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
+import { Order } from "../src/models/order-model.js";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -37,7 +38,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
     } else {
       // If no user found, create new
       user = await User.create({
-        username: name.toLowerCase().replace(/\s/g, ''),
+        username: name.toLowerCase().replace(/\s/g, ""),
         email,
         googleId,
         avatar: picture,
@@ -47,7 +48,8 @@ export const googleAuth = asyncHandler(async (req, res) => {
     }
 
     // Generate tokens
-    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
+    const { accessToken, refreshToken } =
+      await generateAccessTokenAndRefreshToken(user._id);
 
     const loggedInUser = await User.findById(user._id).select(
       "-password -refreshToken"
@@ -70,7 +72,6 @@ export const googleAuth = asyncHandler(async (req, res) => {
           refreshToken,
         })
       );
-
   } catch (error) {
     throw new apiError(401, "Invalid Google token");
   }
@@ -365,4 +366,16 @@ export const allUsers = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new apiResponse(200, "All users retrieved successfully", users));
+});
+
+// get order (for users)
+export const getUserOrders = asyncHandler(async (req, res) => {
+  const { email } = req.params;
+  console.log(email);
+
+  const order = await Order.findOne({ email: email });
+  if (!order) {
+    throw new apiError(404, "This user does not exist!!", []);
+  }
+  res.status(200);
 });

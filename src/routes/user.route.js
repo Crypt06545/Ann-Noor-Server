@@ -4,6 +4,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
   allUsers,
   deleteUser,
+  getUserOrders,
   googleAuth,
   isAuth,
   loginUser,
@@ -34,6 +35,7 @@ userRouter
 userRouter
   .route("/update-role/:email")
   .patch(verifyJWT, adminOnly, updateUserRole);
+userRouter.route("/orders/:email").get(verifyJWT, getUserOrders);
 
 // isauth
 userRouter.route("/is-auth").get(verifyJWT, isAuth);

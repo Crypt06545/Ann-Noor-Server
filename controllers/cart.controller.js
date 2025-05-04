@@ -109,7 +109,6 @@ export const clearCart = asyncHandler(async (req, res) => {
 });
 
 // remove from cart 
-// Remove item from cart completely
 export const removeFromCart = asyncHandler(async (req, res) => {
   const { productId } = req.body;
   const user = req.user;
