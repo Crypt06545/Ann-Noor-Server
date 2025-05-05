@@ -5,7 +5,6 @@ import uploadOnCloudinary from "../src/utils/cloudinary.js";
 import apiResponse from "../src/utils/apiResponse.js";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
-import { Order } from "../src/models/order-model.js";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -371,11 +370,22 @@ export const allUsers = asyncHandler(async (req, res) => {
 // get order (for users)
 export const getUserOrders = asyncHandler(async (req, res) => {
   const { email } = req.params;
-  console.log(email);
-
-  const order = await Order.findOne({ email: email });
-  if (!order) {
-    throw new apiError(404, "This user does not exist!!", []);
+  
+  if (!email) {
+    throw new apiError(400, "Email is required");
   }
-  res.status(200);
+
+  // Find user and populate orders
+  const user = await User.findOne({ email })
+
+  if (!user) {
+    throw new apiError(404, "User not found");
+  }
+
+  return res.status(200).json(
+    new apiResponse(200,  "User orders retrieved successfully",{
+      email: user.email,
+      orders: user.orders
+    },)
+  );
 });

@@ -5,7 +5,6 @@ import asyncHandler from "../src/utils/asyncHandler.js";
 
 // create order
 export const createOrder = asyncHandler(async (req, res) => {
-  // Destructure request body
   const {
     customer,
     payment,
@@ -107,7 +106,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   // Create order data object
   const orderData = {
-    user: user._id,
+    user: user._id, // Associate with user
     customer,
     payment,
     items: items.map(item => ({
@@ -134,8 +133,8 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   // 2. Add the full order to user's orders array
   user.orders.push({
-    _id: order._id, // Same ID as in Order collection
-    ...order.toObject() // Convert Mongoose document to plain object
+    _id: order._id,
+    ...order.toObject()
   });
 
   // 3. Clear the user's cart
