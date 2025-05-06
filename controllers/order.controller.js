@@ -109,12 +109,12 @@ export const createOrder = asyncHandler(async (req, res) => {
     user: user._id, // Associate with user
     customer,
     payment,
-    items: items.map(item => ({
+    items: items.map((item) => ({
       productId: item.productId,
       name: item.name,
       quantity: item.quantity,
       price: item.price,
-      image: item.image
+      image: item.image,
     })),
     subtotal,
     shipping,
@@ -122,7 +122,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     status: "Pending",
     isPaid: payment.method === "cod" ? false : true,
     paidAt: payment.method === "cod" ? null : new Date(),
-    orderDate: orderDate || new Date()
+    orderDate: orderDate || new Date(),
   };
 
   // 1. Create order in Order collection
@@ -134,7 +134,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   // 2. Add the full order to user's orders array
   user.orders.push({
     _id: order._id,
-    ...order.toObject()
+    ...order.toObject(),
   });
 
   // 3. Clear the user's cart
@@ -145,15 +145,19 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.status(201).json(
-    new apiResponse(201, {
-      order,
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        ordersCount: user.orders.length
-      }
-    }, "Order created successfully in both collections")
+    new apiResponse(
+      201,
+      {
+        order,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          ordersCount: user.orders.length,
+        },
+      },
+      "Order created successfully in both collections"
+    )
   );
 });
 
@@ -162,7 +166,7 @@ export const getAllOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find().sort({ createdAt: -1 });
   res
     .status(200)
-    .json(new apiResponse(200, orders, "Orders retrieved successfully"));
+    .json(new apiResponse(200, "Orders retrieved successfully", orders));
 });
 
 // get order (for users)
