@@ -211,7 +211,6 @@ export const logOut = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "none",
-    path: "/",
   };
   return res
     .status(200)
