@@ -31,4 +31,9 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/cart", cartRouter);
 
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("Hello from Ann Noor Server!");
+});
 export default app;
