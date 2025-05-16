@@ -210,6 +210,8 @@ export const logOut = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    path: "/",
   };
   return res
     .status(200)
@@ -370,22 +372,22 @@ export const allUsers = asyncHandler(async (req, res) => {
 // get order (for users)
 export const getUserOrders = asyncHandler(async (req, res) => {
   const { email } = req.params;
-  
+
   if (!email) {
     throw new apiError(400, "Email is required");
   }
 
   // Find user and populate orders
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new apiError(404, "User not found");
   }
 
   return res.status(200).json(
-    new apiResponse(200,  "User orders retrieved successfully",{
+    new apiResponse(200, "User orders retrieved successfully", {
       email: user.email,
-      orders: user.orders
-    },)
+      orders: user.orders,
+    })
   );
 });
