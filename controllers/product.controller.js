@@ -33,7 +33,82 @@ export const prodcutDetails = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, "Product found SuccessFully!!", product));
 });
 
-// create products
+// // create products
+// export const createProduct = asyncHandler(async (req, res) => {
+//   const {
+//     name,
+//     price,
+//     offerPrice,
+//     quantity,
+//     stockStatus,
+//     category,
+//     sku,
+//     tags,
+//     sizes,
+//     rating,
+//   } = req.body;
+
+//   // Validation - Check required fields
+//   if (
+//     [
+//       name,
+//       price,
+//       offerPrice,
+//       quantity,
+//       stockStatus,
+//       category,
+//       sku,
+//       // tags,
+//     ].some((field) => field?.trim() === "")
+//   ) {
+//     throw new apiError(400, "All product fields are required");
+//   }
+
+//   // Check if images were uploaded
+//   if (!req.files || !req.files.images) {
+//     throw new apiError(400, "Product images are required");
+//   }
+
+//   // Upload all images to Cloudinary
+//   const imagesUploadPromises = req?.files?.images.map(async (image) => {
+//     const cloudinaryResponse = await uploadOnCloudinary(image.path);
+//     if (!cloudinaryResponse) {
+//       throw new apiError(500, "Failed to upload product images");
+//     }
+//     return cloudinaryResponse.url;
+//   });
+
+//   // Wait for all uploads to complete
+//   const imageUrls = await Promise.all(imagesUploadPromises);
+
+//   // Create product in database
+//   const product = await Product.create({
+//     name,
+//     price,
+//     offerPrice,
+//     quantity,
+//     stockStatus,
+//     category,
+//     sku,
+//     sizes,
+//     tags,
+//     images: imageUrls,
+//     rating,
+//   });
+
+//   // Verify product creation
+//   const createdProduct = await Product.findById(product._id);
+//   if (!createdProduct) {
+//     throw new apiError(500, "Failed to create product");
+//   }
+
+//   return res
+//     .status(201)
+//     .json(new apiResponse(201, "Product created successfully", createdProduct));
+// });
+
+// update a products
+
 export const createProduct = asyncHandler(async (req, res) => {
   const {
     name,
@@ -48,7 +123,6 @@ export const createProduct = asyncHandler(async (req, res) => {
     rating,
   } = req.body;
 
-  // Validation - Check required fields
   if (
     [
       name,
@@ -58,30 +132,26 @@ export const createProduct = asyncHandler(async (req, res) => {
       stockStatus,
       category,
       sku,
-      // tags,
     ].some((field) => field?.trim() === "")
   ) {
     throw new apiError(400, "All product fields are required");
   }
 
-  // Check if images were uploaded
-  if (!req.files || !req.files.images) {
+  if (!req.files || !req.files.images || req.files.images.length === 0) {
     throw new apiError(400, "Product images are required");
   }
 
-  // Upload all images to Cloudinary
-  const imagesUploadPromises = req?.files?.images.map(async (image) => {
-    const cloudinaryResponse = await uploadOnCloudinary(image.path);
+  // Upload all images to Cloudinary from memory buffer
+  const imagesUploadPromises = req.files.images.map(async (image) => {
+    const cloudinaryResponse = await uploadOnCloudinary(image.buffer, image.originalname);
     if (!cloudinaryResponse) {
       throw new apiError(500, "Failed to upload product images");
     }
-    return cloudinaryResponse.url;
+    return cloudinaryResponse.secure_url;
   });
 
-  // Wait for all uploads to complete
   const imageUrls = await Promise.all(imagesUploadPromises);
 
-  // Create product in database
   const product = await Product.create({
     name,
     price,
@@ -96,7 +166,6 @@ export const createProduct = asyncHandler(async (req, res) => {
     rating,
   });
 
-  // Verify product creation
   const createdProduct = await Product.findById(product._id);
   if (!createdProduct) {
     throw new apiError(500, "Failed to create product");
@@ -107,7 +176,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     .json(new apiResponse(201, "Product created successfully", createdProduct));
 });
 
-// update a products
+
 export const updateProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const updateData = req.body;

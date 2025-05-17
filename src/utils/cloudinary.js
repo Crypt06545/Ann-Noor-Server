@@ -1,5 +1,39 @@
+// import { v2 as cloudinary } from "cloudinary";
+// import fs from "fs";
+// import dotenv from "dotenv";
+// dotenv.config();
+
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_SECRET_KEY,
+// });
+
+// const uploadOnCloudinary = async (localFilePath) => {
+//   try {
+//     if (!localFilePath) return null;
+//     const response = await cloudinary.uploader.upload(localFilePath, {
+//       folder: "products",
+//       resource_type: "auto",
+//       secure: true,
+//     });
+
+//     // console.log("File uploaded to Cloudinary:", response.url);
+//     // Delete the local file after successful upload
+//     fs.unlinkSync(localFilePath);
+
+//     return response;
+//   } catch (error) {
+//     // Clean up local file if upload fails
+//     fs.unlinkSync(localFilePath);
+//     console.error("Cloudinary upload failed:", error.message);
+//     return null;
+//   }
+// };
+
+// export default uploadOnCloudinary;
+
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -9,29 +43,35 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (fileBuffer, filename) => {
   try {
-    if (!localFilePath) return null;
-    const response = await cloudinary.uploader.upload(localFilePath, {
-      folder: "products",
-      resource_type: "auto",
-      secure: true,
+    if (!fileBuffer) return null;
+
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "products",
+          resource_type: "auto",
+          public_id: filename.split(".")[0],
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+
+      uploadStream.end(fileBuffer);
     });
 
-    // console.log("File uploaded to Cloudinary:", response.url);
-    // Delete the local file after successful upload
-    fs.unlinkSync(localFilePath);
-
-    return response;
+    return result;
   } catch (error) {
-    // Clean up local file if upload fails
-    fs.unlinkSync(localFilePath);
     console.error("Cloudinary upload failed:", error.message);
     return null;
   }
 };
 
 export default uploadOnCloudinary;
+
 
 export const deleteFromCloudinary = async (imageUrl) => {
   try {
