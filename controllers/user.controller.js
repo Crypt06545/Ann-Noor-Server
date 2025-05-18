@@ -58,6 +58,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
+      // sameSite: "none",
     };
 
     return res
@@ -181,7 +182,8 @@ export const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    // sameSite: "none",
+    sameSite: "strict",
   };
 
   // send it cookie
@@ -210,7 +212,8 @@ export const logOut = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    // sameSite: "none",
+    sameSite: "strict",
     path: "/",
   };
   return res
