@@ -8,7 +8,9 @@ import { adminOnly, verifyJWT } from "../middlewares/auth.middleware.js";
 
 const orderRouter = Router();
 
-orderRouter.route("/update-order-status/:id").patch(updateOrderStatus);
+orderRouter
+  .route("/update-order-status/:id")
+  .patch(verifyJWT, adminOnly, updateOrderStatus);
 orderRouter.route("/create").post(verifyJWT, adminOnly, createOrder);
 orderRouter.route("/all-orders").get(verifyJWT, adminOnly, getAllOrders);
 

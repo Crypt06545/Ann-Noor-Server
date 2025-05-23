@@ -186,6 +186,7 @@ export const getAllOrders = asyncHandler(async (req, res) => {
 export const updateOrderStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
+  // console.log(id, status);
 
   // Validate input exists
   if (!status) {
@@ -217,7 +218,7 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new apiResponse(200, updatedOrder, "Order status updated successfully")
+      new apiResponse(200,  "Order status updated successfully",updatedOrder)
     );
 });
 
