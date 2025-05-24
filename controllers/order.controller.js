@@ -218,8 +218,28 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new apiResponse(200,  "Order status updated successfully",updatedOrder)
+      new apiResponse(200, "Order status updated successfully", updatedOrder)
     );
 });
 
 // delete order
+
+export const deleteOrder = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  // console.log(id);
+  if (!id) {
+    throw new apiError(400, "Order ID is required");
+  }
+  const order = await Order.findById(id);
+  if (!order) {
+    throw new apiError(404, "Order Not Found !!");
+  }
+  // Delete the order
+  const deletedOrder = await Order.findByIdAndDelete(id);
+  if (!deletedOrder) {
+    throw new apiError(500, "Failed to delete order");
+  }
+  return res
+    .status(200)
+    .json(new apiResponse(200, "Order deleted successfully", deletedOrder));
+});

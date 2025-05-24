@@ -98,16 +98,6 @@ export const generateAccessTokenAndRefreshToken = async (useId) => {
 
 // register a user
 export const registerUser = asyncHandler(async (req, res) => {
-  //   res.status(200).json({ message: "ok " });
-  //   get all details from user
-  //   validation - not empty
-  //   check if user already exists(username,email)
-  //   check images for avatar
-  //   upload them to cloudinary
-  //   create user obj -create entry in db
-  //   remvoe password and remove refreshtoken from response
-  //   check for user creation
-  //   return response
   const { username, email, password } = req.body;
   //   console.log(username, email, password);
 
